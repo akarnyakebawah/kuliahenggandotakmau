@@ -1,15 +1,19 @@
 from rest_framework import generics
 from campaign.models import Campaign, Twibbon
+from campaign.permissions import IsOwnerOrAdminOrReadOnly
 from campaign.serializers import CampaignSerializer, TwibbonSerializer
 from rest_framework.parsers import MultiPartParser, FormParser
+from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
 class CampaignListCreateView(generics.ListCreateAPIView):
+    permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = Campaign.objects.all()
     serializer_class = CampaignSerializer
 
 
 class CampaignUpdateDestoryView(generics.RetrieveUpdateAPIView):
+    permission_classes = (IsOwnerOrAdminOrReadOnly,)
     queryset = Campaign.objects.all()
     serializer_class = CampaignSerializer
 
@@ -23,6 +27,7 @@ class TwibbonListCreateView(generics.ListCreateAPIView):
 
 
 class TwibbonUpdateDestoryView(generics.RetrieveUpdateAPIView):
+    permission_classes = (IsOwnerOrAdminOrReadOnly,)
     def get_queryset(self):
         return Twibbon.objects.filter(campaign__slug=self.kwargs['campaign_slug'])
     serializer_class = TwibbonSerializer

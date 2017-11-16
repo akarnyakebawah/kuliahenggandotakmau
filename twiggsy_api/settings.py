@@ -53,6 +53,12 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+    ),
+}
+
 ROOT_URLCONF = 'twiggsy_api.urls'
 
 TEMPLATES = [
@@ -104,6 +110,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+
+JWT_AUTH = {
+    'JWT_VERIFY_EXPIRATION': False,
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/1.11/topics/i18n/

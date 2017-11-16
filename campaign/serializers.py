@@ -17,8 +17,6 @@ class CampaignSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
         extra_kwargs = {
-            'slug': {'read_only': True},
             'created_at': {'read_only': True},
-            'header_img': {'required': True},
             'twibbon_img': {'required': True},
         }
