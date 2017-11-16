@@ -117,7 +117,10 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 JWT_AUTH = {
-    'JWT_VERIFY_EXPIRATION': False,
+    'JWT_RESPONSE_PAYLOAD_HANDLER':
+        'utils.drf-jwt.jwt_response_payload_handler',
+    'JWT_VERIFY_EXPIRATION':
+        False,
 }
 
 # Internationalization

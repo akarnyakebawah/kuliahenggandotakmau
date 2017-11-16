@@ -33,7 +33,7 @@ class TwibbonListCreateView(generics.ListCreateAPIView):
     serializer_class = TwibbonSerializer
 
     def get_queryset(self):
-        return Twibbon.objects.filter(campaign__slug=self.kwargs['campaign_url'])
+        return Twibbon.objects.filter(campaign__campaign_url=self.kwargs['campaign_url'])
 
     def get_serializer_context(self):
         return {
@@ -47,7 +47,7 @@ class TwibbonUpdateDestroyView(generics.RetrieveUpdateAPIView):
     lookup_url_kwarg = 'twibbon_id'
 
     def get_queryset(self):
-        return Twibbon.objects.filter(campaign__slug=self.kwargs['campaign_url'])
+        return Twibbon.objects.filter(campaign__campaign_url=self.kwargs['campaign_url'])
 
     def get_serializer_context(self):
         return {

@@ -18,8 +18,6 @@ class TwibbonSerializer(serializers.ModelSerializer):
 
 class CampaignSerializer(serializers.ModelSerializer):
 
-    twibbons = TwibbonSerializer(many=True, read_only=True)
-
     class Meta:
         model = Campaign
         fields = ('__all__')

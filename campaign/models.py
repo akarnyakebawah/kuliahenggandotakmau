@@ -41,7 +41,7 @@ class Campaign(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return self.slug
+        return self.campaign_url
 
     @property
     def owner_id(self):
@@ -50,7 +50,7 @@ class Campaign(models.Model):
 
 def twibbon_item_directory_path(instance, filename):
     ext = filename.split('.')[-1]
-    return "campaigns/{0}/{1}.{2}".format(instance.campaign.slug, uuid4().hex, ext)
+    return "campaigns/{0}/{1}.{2}".format(instance.campaign.campaign_url, uuid4().hex, ext)
 
 
 class Twibbon(models.Model):
