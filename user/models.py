@@ -9,7 +9,7 @@ class UserManager(BaseUserManager):
     use_in_migrations = True
 
     def get_by_natural_key(self, username):
-        return self.get(username__iexact=username)
+        return self.get(username__iexact=email)
 
     def _create_user(self, email, password, **extra_fields):
         """
