@@ -7,6 +7,14 @@ class TwibbonSerializer(serializers.ModelSerializer):
         model = Twibbon
         fields = ('__all__')
 
+        extra_kwargs = {
+            'user': {'read_only': True}
+        }
+
+    def create(self, validated_data):
+        return Twibbon.objects.create(user=self.context['user'],
+                                      **validated_data)
+
 
 class CampaignSerializer(serializers.ModelSerializer):
 
@@ -19,4 +27,9 @@ class CampaignSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'created_at': {'read_only': True},
             'twibbon_img': {'required': True},
+            'user': {'read_only': True},
         }
+
+    def create(self, validated_data):
+        return Campaign.objects.create(user=self.context['user'],
+                                       **validated_data)

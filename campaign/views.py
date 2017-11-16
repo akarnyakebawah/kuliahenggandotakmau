@@ -2,7 +2,6 @@ from rest_framework import generics
 from campaign.models import Campaign, Twibbon
 from campaign.permissions import IsOwnerOrAdminOrReadOnly
 from campaign.serializers import CampaignSerializer, TwibbonSerializer
-from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 
 
@@ -11,24 +10,46 @@ class CampaignListCreateView(generics.ListCreateAPIView):
     queryset = Campaign.objects.all()
     serializer_class = CampaignSerializer
 
+    def get_serializer_context(self):
+        return {
+            'user': self.request.user,
+        }
 
-class CampaignUpdateDestoryView(generics.RetrieveUpdateAPIView):
+
+class CampaignUpdateDestroyView(generics.RetrieveUpdateAPIView):
     permission_classes = (IsOwnerOrAdminOrReadOnly,)
     queryset = Campaign.objects.all()
     serializer_class = CampaignSerializer
 
-    lookup_url_kwarg = 'campaign_slug'
+    lookup_url_kwarg = 'campaign_url'
+
+    def get_serializer_context(self):
+        return {
+            'user': self.request.user,
+        }
 
 
 class TwibbonListCreateView(generics.ListCreateAPIView):
-    def get_queryset(self):
-        return Twibbon.objects.filter(campaign__slug=self.kwargs['campaign_slug'])
     serializer_class = TwibbonSerializer
 
-
-class TwibbonUpdateDestoryView(generics.RetrieveUpdateAPIView):
-    permission_classes = (IsOwnerOrAdminOrReadOnly,)
     def get_queryset(self):
-        return Twibbon.objects.filter(campaign__slug=self.kwargs['campaign_slug'])
+        return Twibbon.objects.filter(campaign__slug=self.kwargs['campaign_url'])
+
+    def get_serializer_context(self):
+        return {
+            'user': self.request.user,
+        }
+
+
+class TwibbonUpdateDestroyView(generics.RetrieveUpdateAPIView):
+    permission_classes = (IsOwnerOrAdminOrReadOnly,)
     serializer_class = TwibbonSerializer
     lookup_url_kwarg = 'twibbon_id'
+
+    def get_queryset(self):
+        return Twibbon.objects.filter(campaign__slug=self.kwargs['campaign_url'])
+
+    def get_serializer_context(self):
+        return {
+            'user': self.request.user,
+        }
