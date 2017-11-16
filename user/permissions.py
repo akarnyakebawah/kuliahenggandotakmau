@@ -8,4 +8,5 @@ class IsOwnerOrAdmin(permissions.BasePermission):
         if not request.user:
             return False
 
-        return request.user.is_superuser or request.user.id == obj.id
+        return request.is_admin or request.user.is_superuser\
+            or request.user.id == obj.id
