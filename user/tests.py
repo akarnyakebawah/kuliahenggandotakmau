@@ -4,9 +4,9 @@ from factory import Factory
 
 from django.test import TestCase
 from django.test import Client
-from rest_framework.test import APIRequestFactory, force_authenticate
+from rest_framework.test import APIClient, force_authenticate
 
-from .views import UserListCreateView
+from .views import UserListCreateView, UserUpdateDestroyView
 from .models import UserManager, User
 
 # Create your tests here.
@@ -70,25 +70,24 @@ class UserTests(TestCase):
             user = UserFactory.create_superuser(email='test@test.com', password='test', is_superuser=False)
         self.assertEqual(len(User.objects.all()), 0)
 
-    # Views
+    # User Views
     def test_user_list_view_exists(self):
-        factory = APIRequestFactory()
+        client = APIClient()
         view = UserListCreateView.as_view()
 
-        request = factory.get('/api/v1/users/')
-        response = view(request)
+        response = client.get('/api/v1/users/')
+
         self.assertEqual(response.status_code, 200)
 
     def test_user_list_view_not_authenticated(self):
         user1 = UserFactory.create(email='test1@test.com')
         user2 = UserFactory.create_superuser(email='test2@test.com', password='test')
 
-        factory = APIRequestFactory()
+        client = APIClient()
         view = UserListCreateView.as_view()
 
-        request = factory.get('/api/v1/users/')
-        force_authenticate(request, user=None)
-        response = view(request)
+        client.force_authenticate(user=None)
+        response = client.get('/api/v1/users/')
 
         self.assertEqual(len(response.data), 0)
 
@@ -96,12 +95,11 @@ class UserTests(TestCase):
         user1 = UserFactory.create(email='test1@test.com')
         user2 = UserFactory.create_superuser(email='test2@test.com', password='test')
 
-        factory = APIRequestFactory()
+        client = APIClient()
         view = UserListCreateView.as_view()
 
-        request = factory.get('/api/v1/users/')
-        force_authenticate(request, user=user1)
-        response = view(request)
+        client.force_authenticate(user=user1)
+        response = client.get('/api/v1/users/')
 
         self.assertEqual(len(response.data), 1)
         # TODO make sure content is correct
@@ -110,61 +108,70 @@ class UserTests(TestCase):
         user1 = UserFactory.create(email='test1@test.com')
         user2 = UserFactory.create_superuser(email='test2@test.com', password='test')
 
-        factory = APIRequestFactory()
+        client = APIClient()
         view = UserListCreateView.as_view()
 
-        request = factory.get('/api/v1/users/')
-        force_authenticate(request, user=user2)
-        response = view(request)
+        client.force_authenticate(user=user2)
+        response = client.get('/api/v1/users/')
 
         self.assertEqual(len(response.data), 2)
         # TODO make sure content is correct
 
     def test_user_list_create_success(self):
-        factory = APIRequestFactory()
+        client = APIClient()
         view = UserListCreateView.as_view()
 
-        request = factory.post('/api/v1/users/', {
+        response = client.post('/api/v1/users/', {
                 'name': 'test',
                 'birth_date': '1900-01-01',
                 'email': 'test@test.com',
                 'password': 'test',
             }, format='json')
 
-        response = view(request)
         self.assertEqual(response.status_code, 201)
         self.assertNotEqual(len(User.objects.all()), 0)
 
     def test_user_list_create_invalid_data(self):
-        factory = APIRequestFactory()
+        client = APIClient()
         view = UserListCreateView.as_view()
 
-        request = factory.post('/api/v1/users/', {
+        response = client.post('/api/v1/users/', {
                 'name': None,
                 'birth_date': None,
                 'email': None,
                 'password': None,
             }, format='json')
 
-        response = view(request)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(len(User.objects.all()), 0)
 
-    def test_user_update_success(self):
-        factory = APIRequestFactory()
+    def test_user_view_success(self):
+        client = APIClient()
         view = UserListCreateView.as_view()
 
         user = UserFactory.create()
 
-        request = factory.put('/api/v1/users/' + str(user.id) + '/', {
+        client.force_authenticate(user=user)
+        response = client.get('/api/v1/users/' + str(user.id) + '/')
+
+        self.assertEqual(response.status_code, 200)
+
+    def test_user_update_success(self):
+        client = APIClient()
+        view = UserUpdateDestroyView.as_view()
+
+        user = UserFactory.create_superuser(email="test@test.com", password="test")
+
+        client.force_authenticate(user=user)
+        response = client.put('/api/v1/users/' + str(user.id) + '/', {
                 "id": user.id,
                 "name": "test2",
                 "birth_date": user.birth_date,
                 "email": user.email,
                 "password": user.password,
             }, format='json')
-        force_authenticate(request, user=user)
 
-        response = view(request)
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(user.name, "test2")
+
+        user_new = User.objects.get(id=user.id)
+        self.assertEqual(user_new.name, "test2")
