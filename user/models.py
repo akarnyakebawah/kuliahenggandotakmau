@@ -23,12 +23,12 @@ class UserManager(BaseUserManager):
 
     def create_user(self, email, password=None, **extra_fields):
         extra_fields.setdefault('is_superuser', False)
-        extra_fields.setdefault('is_admin', False)
+        extra_fields.setdefault('is_staff', False)
         return self._create_user(email, password, **extra_fields)
 
     def create_superuser(self, email, password, **extra_fields):
         extra_fields.setdefault('is_superuser', True)
-        extra_fields.setdefault('is_admin', True)
+        extra_fields.setdefault('is_staff', True)
 
         if extra_fields.get('is_superuser') is not True:
             raise ValueError('Superuser must have is_superuser=True.')
@@ -41,7 +41,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     name = models.CharField(_('name'), max_length=50, blank=True)
     date_joined = models.DateTimeField(_('date joined'), auto_now_add=True)
     is_active = models.BooleanField(_('active'), default=True)
-    is_admin = models.BooleanField(_('is admin'), default=False)
+    is_staff = models.BooleanField(_('is staff'), default=False)
     birth_date = models.DateField(blank=True, null=True)
 
     objects = UserManager()
@@ -58,3 +58,6 @@ class User(AbstractBaseUser, PermissionsMixin):
         Returns the first_name plus the last_name, with a space in between.
         '''
         return self.name.strip()
+
+    def get_short_name(self):
+        return self.get_full_name()
