@@ -16,7 +16,7 @@ class CampaignListCreateView(generics.ListCreateAPIView):
         }
 
 
-class CampaignUpdateDestroyView(generics.RetrieveUpdateAPIView):
+class CampaignUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsOwnerOrAdminOrReadOnly,)
     queryset = Campaign.objects.all()
     serializer_class = CampaignSerializer
@@ -41,7 +41,7 @@ class TwibbonListCreateView(generics.ListCreateAPIView):
         }
 
 
-class TwibbonUpdateDestroyView(generics.RetrieveUpdateAPIView):
+class TwibbonUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     permission_classes = (IsOwnerOrAdminOrReadOnly,)
     serializer_class = TwibbonSerializer
     lookup_url_kwarg = 'twibbon_id'
