@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'storages',
     'corsheaders',
     'rest_framework',
     'user',
@@ -167,3 +168,9 @@ STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AWS_ACCESS_KEY_ID = 'AKIAIFRIDEPTSI7LKGSQ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_STORAGE_BUCKET_NAME = 'twiggsy-media'
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
