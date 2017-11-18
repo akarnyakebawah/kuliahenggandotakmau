@@ -1,42 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from factory import DjangoModelFactory, SubFactory
 from django.urls import reverse
 
 from rest_framework.test import APITestCase
-from django.core.files.uploadedfile import SimpleUploadedFile
 
+from user.factories import UserFactory
+from campaign.factories import CampaignFactory, TwibbonFactory
 from campaign.models import Campaign, Twibbon
-from user.tests import UserFactory
 from utils.sample_images.getter import get_sample_image_file_path
-
-
-# Create your tests here.
-
-class CampaignFactory(DjangoModelFactory):
-    class Meta:
-        model = Campaign
-
-    name = "name"
-    campaign_url = "asdfurl"
-    twibbon_img = SimpleUploadedFile(
-        name='jajaja.png',
-        content=open(get_sample_image_file_path('1x1.png'), 'rb').read()
-    )
-
-    user = SubFactory(UserFactory)
-
-
-class TwiwbbonFactory(DjangoModelFactory):
-    class Meta:
-        model = Twibbon
-
-    user = SubFactory(UserFactory)
-    campaign = SubFactory(CampaignFactory)
-    img = SimpleUploadedFile(
-        name='jajaja.png',
-        content=open(get_sample_image_file_path('1x1.png'), 'rb').read()
-    )
 
 
 class CampaignTests(APITestCase):
@@ -152,7 +123,7 @@ class TwibbonTests(APITestCase):
 
     def test_owner_id(self):
         user = UserFactory(email="email1@email.email")
-        twibbon = TwiwbbonFactory(user=user)
+        twibbon = TwibbonFactory(user=user)
         self.assertEqual(twibbon.owner_id, user.id)
 
     # def test_get_twibbons_success(self):
