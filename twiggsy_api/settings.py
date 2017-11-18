@@ -162,6 +162,7 @@ STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
 
+STATIC_URL = '/static/'
 STATICFILES_LOCATION = 'static'
 STATICFILES_STORAGE = 'custom_storages.StaticStorage'
 
