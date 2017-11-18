@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'storages',
     'corsheaders',
     'rest_framework',
     'user',
@@ -175,3 +176,4 @@ DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
 AWS_ACCESS_KEY_ID = 'AKIAJMKZVHTG4JWQKPTQ'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_STORAGE_BUCKET_NAME = 'twiggsy-media'
+AWS_S3_USE_SSL = False
