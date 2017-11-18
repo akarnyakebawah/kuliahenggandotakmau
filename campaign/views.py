@@ -40,6 +40,7 @@ class TwibbonListCreateView(generics.ListCreateAPIView):
     def get_serializer_context(self):
         return {
             'user': self.request.user,
+            'campaign': Campaign.objects.get(campaign_url=self.kwargs['campaign_url'])
         }
 
 
@@ -56,4 +57,5 @@ class TwibbonRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def get_serializer_context(self):
         return {
             'user': self.request.user,
+            'campaign': Campaign.objects.get(campaign_url=self.kwargs['campaign_url'])
         }

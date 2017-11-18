@@ -18,7 +18,8 @@ class TwibbonSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
         extra_kwargs = {
-            'user': {'read_only': True}
+            'user': {'read_only': True},
+            'campaign': {'read_only': True}
         }
 
     def validate_img(self, value):
@@ -26,6 +27,7 @@ class TwibbonSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         return Twibbon.objects.create(user=self.context['user'],
+                                      campaign=self.context['campaign'],
                                       **validated_data)
 
 
