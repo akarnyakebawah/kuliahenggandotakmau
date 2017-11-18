@@ -17,11 +17,11 @@ class CampaignTests(APITestCase):
         campaign = CampaignFactory(user=user)
         self.assertEqual(user.id, campaign.owner_id)
 
-    def test_get_campaigns_success(self):
+    def test_get_list_campaigns_success(self):
         CampaignFactory.create(name="campaign1")
         response = self.client.get(reverse('campaign-list-create'))
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.data[0]["name"], "campaign1")
+        self.assertEqual(response.data['results'][0]["name"], "campaign1")
 
     def test_post_campaign_success(self):
         user = UserFactory()

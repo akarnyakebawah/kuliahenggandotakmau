@@ -67,7 +67,7 @@ class UserTests(APITestCase):
         self.client.force_authenticate(user=None)
         response = self.client.get(reverse('user-list-create'))
 
-        self.assertEqual(len(response.data), 0)
+        self.assertEqual(len(response.data['results']), 0)
 
     def test_user_list_view_authenticated_as_user(self):
         user1 = UserFactory.create(email='test1@test.com')
@@ -78,7 +78,7 @@ class UserTests(APITestCase):
         self.client.force_authenticate(user=user1)
         response = self.client.get(reverse('user-list-create'))
 
-        self.assertEqual(len(response.data), 1)
+        self.assertEqual(len(response.data['results']), 1)
         # TODO make sure content is correct
 
     def test_user_list_view_authenticated_as_superuser(self):
@@ -90,7 +90,7 @@ class UserTests(APITestCase):
         self.client.force_authenticate(user=user2)
         response = self.client.get(reverse('user-list-create'))
 
-        self.assertEqual(len(response.data), 2)
+        self.assertEqual(len(response.data['results']), 2)
         # TODO make sure content is correct
 
     def test_user_list_create_success(self):
