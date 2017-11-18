@@ -1,32 +1,14 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from factory import Factory
+from user.factories import UserFactory
 
+from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient, force_authenticate
 
-from .views import UserListCreateView, UserUpdateDestroyView
-from .models import UserManager, User
+from user.views import UserListCreateView, UserRetrieveUpdateDestroyView
+from user.models import User
 
 # Create your tests here.
-
-class UserFactory(Factory):
-    class Meta:
-        model = User
-
-    email = 'test@test.com'
-    name = 'test'
-    password = 'test'
-
-    def _get_manager():
-        return User.objects
-
-    @classmethod
-    def _create(self, model_class, *args, **kwargs):
-        return self._get_manager().create_user(*args, **kwargs)
-
-    @classmethod
-    def create_superuser(self, email, password, **extra_fields):
-        return self._get_manager().create_superuser(email, password, **extra_fields)
 
 class UserTests(APITestCase):
 
@@ -72,7 +54,7 @@ class UserTests(APITestCase):
     def test_user_list_view_exists(self):
         view = UserListCreateView.as_view()
 
-        response = self.client.get('/api/v1/users/')
+        response = self.client.get(reverse('user-list-create'))
 
         self.assertEqual(response.status_code, 200)
 
@@ -83,7 +65,7 @@ class UserTests(APITestCase):
         view = UserListCreateView.as_view()
 
         self.client.force_authenticate(user=None)
-        response = self.client.get('/api/v1/users/')
+        response = self.client.get(reverse('user-list-create'))
 
         self.assertEqual(len(response.data), 0)
 
@@ -94,7 +76,7 @@ class UserTests(APITestCase):
         view = UserListCreateView.as_view()
 
         self.client.force_authenticate(user=user1)
-        response = self.client.get('/api/v1/users/')
+        response = self.client.get(reverse('user-list-create'))
 
         self.assertEqual(len(response.data), 1)
         # TODO make sure content is correct
@@ -106,7 +88,7 @@ class UserTests(APITestCase):
         view = UserListCreateView.as_view()
 
         self.client.force_authenticate(user=user2)
-        response = self.client.get('/api/v1/users/')
+        response = self.client.get(reverse('user-list-create'))
 
         self.assertEqual(len(response.data), 2)
         # TODO make sure content is correct
@@ -114,7 +96,7 @@ class UserTests(APITestCase):
     def test_user_list_create_success(self):
         view = UserListCreateView.as_view()
 
-        response = self.client.post('/api/v1/users/', {
+        response = self.client.post(reverse('user-list-create'), {
                 'name': 'test',
                 'birth_date': '1900-01-01',
                 'email': 'test@test.com',
@@ -127,7 +109,7 @@ class UserTests(APITestCase):
     def test_user_list_create_invalid_data(self):
         view = UserListCreateView.as_view()
 
-        response = self.client.post('/api/v1/users/', {
+        response = self.client.post(reverse('user-list-create'), {
                 'name': None,
                 'birth_date': None,
                 'email': None,
@@ -138,56 +120,56 @@ class UserTests(APITestCase):
         self.assertEqual(len(User.objects.all()), 0)
 
     def test_user_view_not_authenticated(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user = UserFactory.create()
 
         self.client.force_authenticate(user=None)
-        response = self.client.get('/api/v1/users/' + str(user.id) + '/')
+        response = self.client.get(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}))
 
         self.assertEqual(response.status_code, 404)
 
     def test_user_view_authenticated_as_user_self(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user = UserFactory.create()
 
         self.client.force_authenticate(user=user)
-        response = self.client.get('/api/v1/users/' + str(user.id) + '/')
+        response = self.client.get(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['id'], user.id)
 
     def test_user_view_authenticated_as_user_other(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user1 = UserFactory.create(email='test1@test.com')
         user2 = UserFactory.create(email='test2@test.com')
 
         self.client.force_authenticate(user=user1)
-        response = self.client.get('/api/v1/users/' + str(user2.id) + '/')
+        response = self.client.get(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}))
 
         self.assertEqual(response.status_code, 404)
 
     def test_user_view_authenticated_as_superuser(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user1 = UserFactory.create_superuser(email='test1@test.com', password='test')
         user2 = UserFactory.create(email='test2@test.com')
 
         self.client.force_authenticate(user=user1)
-        response = self.client.get('/api/v1/users/' + str(user2.id) + '/')
+        response = self.client.get(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}))
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['id'], user2.id)
 
     def test_user_update_invalid_data(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user = UserFactory.create_superuser(name='test', email='test@test.com', password='test')
 
         self.client.force_authenticate(user=user)
-        response = self.client.put('/api/v1/users/' + str(user.id) + '/', {
+        response = self.client.put(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}), {
                 "id": user.id,
                 "name": None,
                 "birth_date": user.birth_date,
@@ -201,12 +183,12 @@ class UserTests(APITestCase):
         self.assertEqual(user_new.name, "test")
 
     def test_user_update_not_authenticated(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user = UserFactory.create()
 
         self.client.force_authenticate(user=None)
-        response = self.client.put('/api/v1/users/' + str(user.id) + '/', {
+        response = self.client.put(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}), {
                 "id": user.id,
                 "name": "test2",
                 "birth_date": user.birth_date,
@@ -220,12 +202,12 @@ class UserTests(APITestCase):
         self.assertEqual(user_new.name, "test")
 
     def test_user_update_authenticated_as_user_self(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user = UserFactory.create()
 
         self.client.force_authenticate(user=user)
-        response = self.client.put('/api/v1/users/' + str(user.id) + '/', {
+        response = self.client.put(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}), {
                 "id": user.id,
                 "name": "test2",
                 "birth_date": user.birth_date,
@@ -239,13 +221,13 @@ class UserTests(APITestCase):
         self.assertEqual(user_new.name, "test2")
 
     def test_user_update_authenticated_as_user_other(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user1 = UserFactory.create(email="test1@test.com")
         user2 = UserFactory.create(email="test2@test.com")
 
         self.client.force_authenticate(user=user1)
-        response = self.client.put('/api/v1/users/' + str(user2.id) + '/', {
+        response = self.client.put(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}), {
                 "id": user2.id,
                 "name": "test2",
                 "birth_date": user2.birth_date,
@@ -259,13 +241,13 @@ class UserTests(APITestCase):
         self.assertEqual(user_new.name, "test")
 
     def test_user_update_authenticated_as_superuser(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user1 = UserFactory.create_superuser(email="test1@test.com", password="test")
         user2 = UserFactory.create(email="test2@test.com")
 
         self.client.force_authenticate(user=user1)
-        response = self.client.put('/api/v1/users/' + str(user2.id) + '/', {
+        response = self.client.put(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}), {
                 "id": user2.id,
                 "name": "test2",
                 "birth_date": user2.birth_date,
@@ -279,12 +261,12 @@ class UserTests(APITestCase):
         self.assertEqual(user_new.name, "test2")
 
     def test_user_destroy_not_authenticated(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user = UserFactory.create()
 
         self.client.force_authenticate(user=None)
-        response = self.client.delete('/api/v1/users/' + str(user.id) + '/')
+        response = self.client.delete(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}))
 
         self.assertEqual(response.status_code, 404)
 
@@ -294,42 +276,44 @@ class UserTests(APITestCase):
             self.fail("DoesNotExist raised")
 
     def test_user_destroy_authenticated_as_user_self(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user = UserFactory.create()
 
         self.client.force_authenticate(user=user)
-        response = self.client.delete('/api/v1/users/' + str(user.id) + '/')
+        response = self.client.delete(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}))
 
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 403)
 
-        with self.assertRaises(User.DoesNotExist):
+        try:
             user_new = User.objects.get(id=user.id)
+        except User.DoesNotExist:
+            self.fail("DoesNotExist raised")
 
     def test_user_destroy_authenticated_as_user_other(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user1 = UserFactory.create(email="test1@test.com")
         user2 = UserFactory.create(email="test2@test.com")
 
         self.client.force_authenticate(user=user1)
-        response = self.client.delete('/api/v1/users/' + str(user2.id) + '/')
+        response = self.client.delete(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}))
 
         self.assertEqual(response.status_code, 404)
 
         try:
             user2_new = User.objects.get(id=user2.id)
         except User.DoesNotExist:
-            self.fail("AssertionError: DoesNotExist raised")
+            self.fail("DoesNotExist raised")
 
     def test_user_destroy_authenticated_as_superuser(self):
-        view = UserUpdateDestroyView.as_view()
+        view = UserRetrieveUpdateDestroyView.as_view()
 
         user1 = UserFactory.create_superuser(email="test1@test.com", password="test")
         user2 = UserFactory.create(email="test2@test.com")
 
         self.client.force_authenticate(user=user1)
-        response = self.client.delete('/api/v1/users/' + str(user2.id) + '/')
+        response = self.client.delete(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}))
 
         self.assertEqual(response.status_code, 204)
 
