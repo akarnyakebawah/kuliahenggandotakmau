@@ -16,7 +16,7 @@ class UserListCreateView(generics.ListCreateAPIView):
     serializer_class = UserSerializer
 
 
-class UserUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
+class UserRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
     def get_queryset(self):
         if self.request.user:
             if self.request.user.is_superuser:
