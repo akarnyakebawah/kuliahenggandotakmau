@@ -1,3 +1,4 @@
+from utils.user import get_user_or_none
 from rest_framework import generics
 from campaign.models import Campaign, Twibbon
 from campaign.permissions import IsOwnerOrAdminOrReadOnly
@@ -12,7 +13,7 @@ class CampaignListCreateView(generics.ListCreateAPIView):
 
     def get_serializer_context(self):
         return {
-            'user': self.request.user,
+            'user': get_user_or_none(self.request.user),
         }
 
 
@@ -25,7 +26,7 @@ class CampaignRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_serializer_context(self):
         return {
-            'user': self.request.user,
+            'user': get_user_or_none(self.request.user),
         }
 
 
@@ -39,7 +40,7 @@ class TwibbonListCreateView(generics.ListCreateAPIView):
 
     def get_serializer_context(self):
         return {
-            'user': self.request.user,
+            'user': get_user_or_none(self.request.user),
             'campaign': Campaign.objects.get(campaign_url=self.kwargs['campaign_url'])
         }
 
@@ -56,6 +57,6 @@ class TwibbonRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
 
     def get_serializer_context(self):
         return {
-            'user': self.request.user,
+            'user': get_user_or_none(self.request.user),
             'campaign': Campaign.objects.get(campaign_url=self.kwargs['campaign_url'])
         }

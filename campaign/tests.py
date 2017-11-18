@@ -63,7 +63,7 @@ class CampaignTests(APITestCase):
             'twibbon_img': open(get_sample_image_file_path('1x1.png'), 'rb')
         })
         self.assertEqual(response.status_code, 400)
-        self.assertEqual(response.data['campaign_url'], ["url must be alhpanumeric"])
+        self.assertEqual(response.data['campaign_url'], ["url must be alphanumeric"])
 
     def test_post_campaign_owner_is_valid(self):
         user = UserFactory()
@@ -153,3 +153,25 @@ class TwibbonTests(APITestCase):
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Twibbon.objects.all().count(), 1)
         self.assertEqual(campaign1.twibbons.all().count(), 1)
+
+    def test_post_twibbon_without_user(self):
+        user = UserFactory()
+        campaign = CampaignFactory(user=user)
+        response = self.client.post(
+            reverse(
+                'twibbon-list-create',
+                kwargs={'campaign_url': campaign.campaign_url}),
+            {'img': open(get_sample_image_file_path('1x1.png'), 'rb')}
+        )
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Twibbon.objects.all().count(), 1)
+
+    def test_post_twibbon_with_2x1_image(self):
+        campaign = CampaignFactory()
+        response = self.client.post(
+            reverse(
+                'twibbon-list-create',
+                kwargs={'campaign_url': campaign.campaign_url}),
+            {'img': open(get_sample_image_file_path('2x1.png'), 'rb')}
+        )
+        self.assertEqual(response.status_code, 400)

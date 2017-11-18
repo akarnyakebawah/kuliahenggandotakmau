@@ -7,7 +7,7 @@ class IsOwnerOrAdminOrReadOnly(permissions.BasePermission):
         if request.method in permissions.SAFE_METHODS:
             return True
 
-        if not request.user:
+        if not request.user.is_authenticated():
             return False
 
         return request.user.is_staff or request.user.is_superuser\
