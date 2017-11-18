@@ -25,5 +25,3 @@ urlpatterns = [
     url(r'^api/v1/campaigns/', include('campaign.urls'), name="campaign"),
     url(r'^api/v1/auth/', obtain_jwt_token),
 ]
-
-urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -12,9 +12,15 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 import dj_database_url
 import os
 
+# Deployment security settings
+SECURE_CONTENT_TYPE_NOSNIFF = True
+SECURE_BROWSER_XSS_FILTER = True
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = True
+X_FRAME_OPTIONS = 'DENY'
+
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -38,6 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # Local apps
     'django_s3_storage',
     'corsheaders',
     'rest_framework',
@@ -54,8 +61,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-
-    'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
 
 REST_FRAMEWORK = {
@@ -85,7 +90,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'twiggsy_api.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
@@ -153,26 +157,24 @@ USE_L10N = True
 
 USE_TZ = True
 
+# AWS setup
+
+# The AWS region to connect to.
+AWS_REGION = 'ap-southeast-1'
+AWS_ACCESS_KEY_ID = 'AKIAJMKZVHTG4JWQKPTQ'
+AWS_SECRET_ACCESS_KEY = '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'
+AWS_S3_BUCKET_NAME = 'twiggsy-media'
+AWS_S3_BUCKET_NAME_STATIC = 'twiggsy-media'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/
 
-PROJECT_ROOT = os.path.dirname(os.path.abspath(__file__))
-
-STATICFILES_DIRS = (
-    os.path.join(PROJECT_ROOT, 'static'),
-)
-
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
-STATICFILES_LOCATION = 'static'
 STATICFILES_STORAGE = 'django_s3_storage.storage.StaticS3Storage'
 
-MEDIA_URL = '/media/'
+# Media files
+
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-MEDIAFILES_LOCATION = 'media'
+MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'django_s3_storage.storage.S3Storage'
-
-AWS_ACCESS_KEY_ID = 'AKIAJMKZVHTG4JWQKPTQ'
-AWS_SECRET_ACCESS_KEY = '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'
-AWS_S3_BUCKET_NAME = "twiggsy-media"
