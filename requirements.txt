@@ -11,6 +11,8 @@ django-storages==1.6.5
 djangorestframework==3.7.3
 djangorestframework-jwt==1.11.0
 docutils==0.14
+factory-boy==2.9.2
+Faker==0.8.7
 gunicorn==19.7.1
 jmespath==0.9.3
 Markdown==2.6.9
@@ -22,5 +24,6 @@ python-dateutil==2.6.1
 pytz==2017.3
 s3transfer==0.1.11
 six==1.11.0
+text-unidecode==1.1
 typing==3.6.2
 whitenoise==3.3.1
