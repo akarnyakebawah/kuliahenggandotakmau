@@ -38,7 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    'storages',
+    'django_s3_storage',
     'corsheaders',
     'rest_framework',
     'user',
@@ -165,15 +165,14 @@ STATICFILES_DIRS = (
 
 STATIC_URL = '/static/'
 STATICFILES_LOCATION = 'static'
-STATICFILES_STORAGE = 'custom_storages.StaticStorage'
+STATICFILES_STORAGE = 'django_s3_storage.storage.StaticS3Storage'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 MEDIAFILES_LOCATION = 'media'
-DEFAULT_FILE_STORAGE = 'custom_storages.MediaStorage'
+DEFAULT_FILE_STORAGE = 'django_s3_storage.storage.S3Storage'
 
 AWS_ACCESS_KEY_ID = 'AKIAJMKZVHTG4JWQKPTQ'
 AWS_SECRET_ACCESS_KEY = '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'
-AWS_STORAGE_BUCKET_NAME = 'twiggsy-media'
-AWS_S3_USE_SSL = False
+AWS_S3_BUCKET_NAME = "twiggsy-media"
