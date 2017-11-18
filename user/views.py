@@ -1,6 +1,8 @@
-from rest_framework import generics
+from rest_framework import generics, status
+from rest_framework.response import Response
 from user.models import User
 from user.serializers import UserSerializer
+from user.permissions import IsOwnerOrAdmin
 
 
 class UserListCreateView(generics.ListCreateAPIView):
@@ -22,5 +24,6 @@ class UserUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):
             return User.objects.filter(id=self.request.user.id)
         return []
 
+    permission_classes = (IsOwnerOrAdmin,)
     serializer_class = UserSerializer
     lookup_url_kwarg = 'user_id'

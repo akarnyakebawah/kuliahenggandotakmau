@@ -301,10 +301,12 @@ class UserTests(APITestCase):
         self.client.force_authenticate(user=user)
         response = self.client.delete('/api/v1/users/' + str(user.id) + '/')
 
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 403)
 
-        with self.assertRaises(User.DoesNotExist):
+        try:
             user_new = User.objects.get(id=user.id)
+        except User.DoesNotExist:
+            self.fail("DoesNotExist raised")
 
     def test_user_destroy_authenticated_as_user_other(self):
         view = UserUpdateDestroyView.as_view()
@@ -320,7 +322,7 @@ class UserTests(APITestCase):
         try:
             user2_new = User.objects.get(id=user2.id)
         except User.DoesNotExist:
-            self.fail("AssertionError: DoesNotExist raised")
+            self.fail("DoesNotExist raised")
 
     def test_user_destroy_authenticated_as_superuser(self):
         view = UserUpdateDestroyView.as_view()
