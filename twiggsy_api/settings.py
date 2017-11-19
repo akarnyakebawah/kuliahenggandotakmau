@@ -175,3 +175,10 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # AWS_STORAGE_BUCKET_NAME = 'twiggsy-media'
 
 # DEFAULT_FILE_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+
+# Email Config
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'support@twiggsy.com'
+EMAIL_HOST_PASSWORD = 'parkview'
+EMAIL_USE_TLS = True
