@@ -184,3 +184,11 @@ STATICFILES_STORAGE = 'django_s3_storage.storage.StaticS3Storage'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
 DEFAULT_FILE_STORAGE = 'django_s3_storage.storage.S3Storage'
+
+# Email Config
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'support@twiggsy.com'
+EMAIL_HOST_PASSWORD = 'parkview'
+EMAIL_USE_TLS = True
