@@ -18,15 +18,19 @@ class TwibbonSerializer(serializers.ModelSerializer):
         fields = ('__all__')
 
         extra_kwargs = {
-            'user': {'read_only': True}
+            'user': {'read_only': True},
+            'campaign': {'read_only': True}
         }
 
     def validate_img(self, value):
         return is_ratio_1x1(value)
 
     def create(self, validated_data):
-        return Twibbon.objects.create(user=self.context['user'],
-                                      **validated_data)
+        return Twibbon.objects.create(
+            user=self.context.get('user'),
+            campaign=self.context.get('campaign'),
+            **validated_data
+        )
 
 
 class CampaignSerializer(serializers.ModelSerializer):
@@ -46,9 +50,11 @@ class CampaignSerializer(serializers.ModelSerializer):
 
     def validate_campaign_url(self, value):
         if not value.isalnum():
-            raise serializers.ValidationError("url must be alhpanumeric")
+            raise serializers.ValidationError("url must be alphanumeric")
         return value
 
     def create(self, validated_data):
-        return Campaign.objects.create(user=self.context['user'],
-                                       **validated_data)
+        return Campaign.objects.create(
+            user=self.context.get('user'),
+            **validated_data
+        )

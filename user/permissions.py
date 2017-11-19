@@ -5,7 +5,7 @@ class IsOwnerOrAdmin(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
 
-        if not request.user:
+        if not request.user.is_authenticated():
             return False
 
         if request.method != "DELETE":
@@ -13,4 +13,3 @@ class IsOwnerOrAdmin(permissions.BasePermission):
                 or request.user.id == obj.id
         else:
             return request.user.is_superuser
-        
