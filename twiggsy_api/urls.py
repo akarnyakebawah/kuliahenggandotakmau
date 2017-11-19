@@ -21,9 +21,9 @@ from rest_framework_jwt.views import obtain_jwt_token
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
-    url(r'^api/v1/users/', include('user.urls'), name="user"),
-    url(r'^api/v1/campaigns/', include('campaign.urls'), name="campaign"),
-    url(r'^api/v1/auth/', obtain_jwt_token),
+    url(r'^v1/users/', include('user.urls'), name="user"),
+    url(r'^v1/campaigns/', include('campaign.urls'), name="campaign"),
+    url(r'^v1/auth/', obtain_jwt_token),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
