@@ -11,7 +11,6 @@ from utils.sample_images.getter import get_sample_image_file_path
 
 
 class CampaignTests(APITestCase):
-
     def test_owner_id(self):
         user = UserFactory()
         campaign = CampaignFactory(user=user)
@@ -19,7 +18,7 @@ class CampaignTests(APITestCase):
 
     def test_get_list_campaigns_success(self):
         CampaignFactory.create(name="campaign1")
-        response = self.client.get(reverse('campaign-list-create'))
+        response = self.client.get(reverse('campaign-list-create'),secure=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['results'][0]["name"], "campaign1")
 
@@ -30,9 +29,10 @@ class CampaignTests(APITestCase):
             'name': 'Nama',
             'campaign_url': 'url',
             'twibbon_img': open(get_sample_image_file_path('1x1.png'), 'rb')
-        })
+        },secure=True)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Campaign.objects.all().count(), 1)
+
         self.assertEqual(Campaign.objects.first().name, 'Nama')
 
     def test_post_campaign_without_user(self):
@@ -40,7 +40,7 @@ class CampaignTests(APITestCase):
             'name': 'Nama',
             'campaign_url': 'url',
             'twibbon_img': open(get_sample_image_file_path('1x1.png'), 'rb')
-        })
+        },secure=True)
         self.assertEqual(response.status_code, 401)
 
     def test_post_campaign_with_2x1_image(self):
@@ -50,7 +50,7 @@ class CampaignTests(APITestCase):
             'name': 'Nama',
             'campaign_url': 'url',
             'twibbon_img': open(get_sample_image_file_path('2x1.png'), 'rb')
-        })
+        },secure=True)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['twibbon_img'], ['image ratio must be 1:1'])
 
@@ -61,7 +61,7 @@ class CampaignTests(APITestCase):
             'name': 'Nama',
             'campaign_url': 'url!',
             'twibbon_img': open(get_sample_image_file_path('1x1.png'), 'rb')
-        })
+        },secure=True)
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data['campaign_url'], ["url must be alphanumeric"])
 
@@ -72,7 +72,7 @@ class CampaignTests(APITestCase):
             'name': 'Nama',
             'campaign_url': 'url',
             'twibbon_img': open(get_sample_image_file_path('1x1.png'), 'rb')
-        })
+        },secure=True)
         campaign = Campaign.objects.first()
         self.assertEqual(campaign.owner_id, user.id)
 
@@ -86,7 +86,7 @@ class CampaignTests(APITestCase):
             {'name': 'Nama',
              'campaign_url': 'url',
              'twibbon_img': open(get_sample_image_file_path('1x1.png'), 'rb')}
-        )
+        ,secure=True)
         new_campaign = Campaign.objects.first()
         self.assertEqual(response.status_code, 200)
         self.assertEqual(new_campaign.name, 'Nama')
@@ -100,7 +100,7 @@ class CampaignTests(APITestCase):
             {'name': 'Nama',
              'campaign_url': 'url',
              'twibbon_img': open(get_sample_image_file_path('1x1.png'), 'rb')}
-        )
+        ,secure=True)
         self.assertEqual(response.status_code, 401)
 
     def test_put_campaign_user_forbidden(self):
@@ -115,12 +115,11 @@ class CampaignTests(APITestCase):
             {'name': 'Nama',
              'campaign_url': 'url',
              'twibbon_img': open(get_sample_image_file_path('1x1.png'), 'rb')}
-        )
+        ,secure=True)
         self.assertEqual(response.status_code, 403)
 
 
 class TwibbonTests(APITestCase):
-
     def test_owner_id(self):
         user = UserFactory(email="email1@email.email")
         twibbon = TwibbonFactory(user=user)
@@ -135,7 +134,7 @@ class TwibbonTests(APITestCase):
             reverse(
                 'twibbon-list-create',
                 kwargs={'campaign_url': campaign.campaign_url})
-        )
+        ,secure=True)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['results'][0]['caption'], 'caption')
         self.assertEqual(response.data['results'][0]['user'], user2.id)
@@ -149,7 +148,7 @@ class TwibbonTests(APITestCase):
                 'twibbon-list-create',
                 kwargs={'campaign_url': campaign1.campaign_url}),
             {'img': open(get_sample_image_file_path('1x1.png'), 'rb')}
-        )
+        ,secure=True)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Twibbon.objects.all().count(), 1)
         self.assertEqual(campaign1.twibbons.all().count(), 1)
@@ -162,7 +161,7 @@ class TwibbonTests(APITestCase):
                 'twibbon-list-create',
                 kwargs={'campaign_url': campaign.campaign_url}),
             {'img': open(get_sample_image_file_path('1x1.png'), 'rb')}
-        )
+        ,secure=True)
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Twibbon.objects.all().count(), 1)
 
@@ -173,5 +172,5 @@ class TwibbonTests(APITestCase):
                 'twibbon-list-create',
                 kwargs={'campaign_url': campaign.campaign_url}),
             {'img': open(get_sample_image_file_path('2x1.png'), 'rb')}
-        )
+        ,secure=True)
         self.assertEqual(response.status_code, 400)

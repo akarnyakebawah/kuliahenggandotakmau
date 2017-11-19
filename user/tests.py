@@ -54,7 +54,7 @@ class UserTests(APITestCase):
     def test_user_list_view_exists(self):
         view = UserListCreateView.as_view()
 
-        response = self.client.get(reverse('user-list-create'))
+        response = self.client.get(reverse('user-list-create'),secure=True)
 
         self.assertEqual(response.status_code, 200)
 
@@ -65,7 +65,7 @@ class UserTests(APITestCase):
         view = UserListCreateView.as_view()
 
         self.client.force_authenticate(user=None)
-        response = self.client.get(reverse('user-list-create'))
+        response = self.client.get(reverse('user-list-create'),secure=True)
 
         self.assertEqual(len(response.data['results']), 0)
 
@@ -76,7 +76,7 @@ class UserTests(APITestCase):
         view = UserListCreateView.as_view()
 
         self.client.force_authenticate(user=user1)
-        response = self.client.get(reverse('user-list-create'))
+        response = self.client.get(reverse('user-list-create'),secure=True)
 
         self.assertEqual(len(response.data['results']), 1)
         # TODO make sure content is correct
@@ -88,7 +88,7 @@ class UserTests(APITestCase):
         view = UserListCreateView.as_view()
 
         self.client.force_authenticate(user=user2)
-        response = self.client.get(reverse('user-list-create'))
+        response = self.client.get(reverse('user-list-create'),secure=True)
 
         self.assertEqual(len(response.data['results']), 2)
         # TODO make sure content is correct
@@ -101,7 +101,7 @@ class UserTests(APITestCase):
                 'birth_date': '1900-01-01',
                 'email': 'test@test.com',
                 'password': 'test',
-            }, format='json')
+            }, format='json', secure=True)
 
         self.assertEqual(response.status_code, 201)
         self.assertNotEqual(len(User.objects.all()), 0)
@@ -114,7 +114,7 @@ class UserTests(APITestCase):
                 'birth_date': None,
                 'email': None,
                 'password': None,
-            }, format='json')
+            }, format='json', secure=True)
 
         self.assertEqual(response.status_code, 400)
         self.assertEqual(len(User.objects.all()), 0)
@@ -125,7 +125,7 @@ class UserTests(APITestCase):
         user = UserFactory.create()
 
         self.client.force_authenticate(user=None)
-        response = self.client.get(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}))
+        response = self.client.get(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}),secure=True)
 
         self.assertEqual(response.status_code, 404)
 
@@ -135,7 +135,7 @@ class UserTests(APITestCase):
         user = UserFactory.create()
 
         self.client.force_authenticate(user=user)
-        response = self.client.get(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}))
+        response = self.client.get(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}),secure=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['id'], user.id)
@@ -147,7 +147,7 @@ class UserTests(APITestCase):
         user2 = UserFactory.create(email='test2@test.com')
 
         self.client.force_authenticate(user=user1)
-        response = self.client.get(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}))
+        response = self.client.get(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}),secure=True)
 
         self.assertEqual(response.status_code, 404)
 
@@ -158,7 +158,7 @@ class UserTests(APITestCase):
         user2 = UserFactory.create(email='test2@test.com')
 
         self.client.force_authenticate(user=user1)
-        response = self.client.get(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}))
+        response = self.client.get(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}),secure=True)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['id'], user2.id)
@@ -175,7 +175,7 @@ class UserTests(APITestCase):
                 "birth_date": user.birth_date,
                 "email": user.email,
                 "password": user.password,
-            }, format='json')
+            }, format='json',secure=True)
 
         self.assertEqual(response.status_code, 400)
 
@@ -194,7 +194,7 @@ class UserTests(APITestCase):
                 "birth_date": user.birth_date,
                 "email": user.email,
                 "password": user.password,
-            }, format='json')
+            }, format='json',secure=True)
 
         self.assertEqual(response.status_code, 404)
 
@@ -213,7 +213,7 @@ class UserTests(APITestCase):
                 "birth_date": user.birth_date,
                 "email": user.email,
                 "password": user.password,
-            }, format='json')
+            }, format='json',secure=True)
 
         self.assertEqual(response.status_code, 200)
 
@@ -233,7 +233,7 @@ class UserTests(APITestCase):
                 "birth_date": user2.birth_date,
                 "email": user2.email,
                 "password": user2.password,
-            }, format='json')
+            }, format='json',secure=True)
 
         self.assertEqual(response.status_code, 404)
 
@@ -253,7 +253,7 @@ class UserTests(APITestCase):
                 "birth_date": user2.birth_date,
                 "email": user2.email,
                 "password": user2.password,
-            }, format='json')
+            }, format='json',secure=True)
 
         self.assertEqual(response.status_code, 200)
 
@@ -266,7 +266,7 @@ class UserTests(APITestCase):
         user = UserFactory.create()
 
         self.client.force_authenticate(user=None)
-        response = self.client.delete(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}))
+        response = self.client.delete(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}),secure=True)
 
         self.assertEqual(response.status_code, 404)
 
@@ -281,7 +281,7 @@ class UserTests(APITestCase):
         user = UserFactory.create()
 
         self.client.force_authenticate(user=user)
-        response = self.client.delete(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}))
+        response = self.client.delete(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}),secure=True)
 
         self.assertEqual(response.status_code, 403)
 
@@ -297,7 +297,7 @@ class UserTests(APITestCase):
         user2 = UserFactory.create(email="test2@test.com")
 
         self.client.force_authenticate(user=user1)
-        response = self.client.delete(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}))
+        response = self.client.delete(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}),secure=True)
 
         self.assertEqual(response.status_code, 404)
 
@@ -313,7 +313,7 @@ class UserTests(APITestCase):
         user2 = UserFactory.create(email="test2@test.com")
 
         self.client.force_authenticate(user=user1)
-        response = self.client.delete(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}))
+        response = self.client.delete(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}),secure=True)
 
         self.assertEqual(response.status_code, 204)
 
