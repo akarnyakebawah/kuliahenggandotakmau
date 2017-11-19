@@ -175,3 +175,69 @@ class TwibbonTests(APITestCase):
             {'img': open(get_sample_image_file_path('2x1.png'), 'rb')}
         )
         self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data['img'], ['image ratio must be 1:1'])
+
+    def test_post_campaign_owner_is_valid(self):
+        campaign = CampaignFactory()
+        user = UserFactory(email="heho@heho.heho")
+        self.client.force_authenticate(user=user)
+        response = self.client.post(
+            reverse(
+                'twibbon-list-create',
+                kwargs={'campaign_url': campaign.campaign_url}),
+            {'img': open(get_sample_image_file_path('1x1.png'), 'rb')}
+        )
+        twibbon = Twibbon.objects.first()
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(twibbon.owner_id, user.id)
+
+    def test_put_twibbon_success(self):
+        user = UserFactory(email="email1@a.b")
+        campaign = CampaignFactory(name="campaign1", user=user)
+        twibbon = TwibbonFactory(campaign=campaign, caption="heho", user=user)
+        self.client.force_authenticate(user=user)
+        response = self.client.put(
+            reverse(
+                'twibbon-retrieve-update-destroy',
+                kwargs={'campaign_url': campaign.campaign_url,
+                        'twibbon_id': twibbon.id}),
+            {'caption': 'Hehe',
+             'img': open(get_sample_image_file_path('1x1.png'), 'rb')}
+        )
+        new_twibbon = Twibbon.objects.first()
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(new_twibbon.caption, 'Hehe')
+
+    def test_put_twibbon_user_unauthorized(self):
+        user = UserFactory(email="email1@a.b")
+        campaign = CampaignFactory(name="campaign1", user=user)
+        twibbon = TwibbonFactory(campaign=campaign, caption="heho", user=user)
+        response = self.client.put(
+            reverse(
+                'twibbon-retrieve-update-destroy',
+                kwargs={'campaign_url': campaign.campaign_url,
+                        'twibbon_id': twibbon.id}),
+            {'caption': 'Hehe',
+             'img': open(get_sample_image_file_path('1x1.png'), 'rb')}
+        )
+        new_twibbon = Twibbon.objects.first()
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(new_twibbon.caption, "heho")
+
+    def test_put_twibbon_user_forbidden(self):
+        user = UserFactory(email="email1@a.b")
+        user2 = UserFactory(email="email2@a.b")
+        campaign = CampaignFactory(name="campaign1", user=user)
+        twibbon = TwibbonFactory(campaign=campaign, caption="heho", user=user)
+        self.client.force_authenticate(user=user2)
+        response = self.client.put(
+            reverse(
+                'twibbon-retrieve-update-destroy',
+                kwargs={'campaign_url': campaign.campaign_url,
+                        'twibbon_id': twibbon.id}),
+            {'caption': 'Hehe',
+             'img': open(get_sample_image_file_path('1x1.png'), 'rb')}
+        )
+        new_twibbon = Twibbon.objects.first()
+        self.assertEqual(response.status_code, 403)
+        self.assertEqual(new_twibbon.caption, "heho")
