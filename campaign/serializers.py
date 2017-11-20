@@ -1,15 +1,6 @@
 from rest_framework import serializers
 from campaign.models import Campaign, Twibbon
-
-from PIL import Image
-
-
-def is_ratio_1x1(image):
-    img = Image.open(image)
-    width, height = img.size
-    if width != height:
-        raise serializers.ValidationError("image ratio must be 1:1")
-    return image
+from utils.image import is_ratio_1x1, is_size_small
 
 
 class TwibbonSerializer(serializers.ModelSerializer):
@@ -23,7 +14,7 @@ class TwibbonSerializer(serializers.ModelSerializer):
         }
 
     def validate_img(self, value):
-        return is_ratio_1x1(value)
+        return is_ratio_1x1(value) and is_size_small(value)
 
     def create(self, validated_data):
         return Twibbon.objects.create(
@@ -46,7 +37,7 @@ class CampaignSerializer(serializers.ModelSerializer):
         }
 
     def validate_twibbon_img(self, value):
-        return is_ratio_1x1(value)
+        return is_ratio_1x1(value) and is_size_small(value)
 
     def validate_campaign_url(self, value):
         if not value.isalnum():
