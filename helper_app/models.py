@@ -16,4 +16,13 @@ class TemporaryImage(models.Model):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        self.relative_img = str(self.img)
+
+        # TODO TEMPORARY FIX, FIND A BETTER WAY #
+        tmp = TemporaryImage.objects.get(id=self.id)
+        if(tmp.relative_img == None or tmp.relative_img == ''):
+            tmp.relative_img = str(self.img)
+            self.relative_img = str(self.img)
+            tmp.save()
+
+
+
