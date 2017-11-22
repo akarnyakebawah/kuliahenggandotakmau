@@ -23,5 +23,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^v1/users/', include('user.urls'), name="user"),
     url(r'^v1/campaigns/', include('campaign.urls'), name="campaign"),
+    url(r'^v1/helper/', include('helper_app.urls'), name="helper"),
     url(r'^v1/auth/', obtain_jwt_token),
 ]
