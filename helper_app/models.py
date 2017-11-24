@@ -15,9 +15,9 @@ class TemporaryImage(models.Model):
 
     @property
     def scale(self):
-        scalew = 1024.0/self.width
-        scaleh = 1024.0/self.height
-        return min(scalew,scaleh)
+        scalew = self.width/1024.0
+        scaleh = self.height/1024.0
+        return max(scalew,scaleh)
 
     class Meta:
         ordering = ['-created_at']
