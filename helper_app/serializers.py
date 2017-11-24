@@ -4,9 +4,10 @@ from utils.image import is_ratio_1x1, is_size_small
 
 
 class TemporaryImageSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = TemporaryImage
-        fields = ('__all__')
+        fields = ('img', 'relative_img', 'width', 'height', 'created_at', 'scale')
 
         extra_kwargs = {
             'created_at': {'read_only': True}
