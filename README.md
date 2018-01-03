@@ -17,6 +17,23 @@ You will need Node >= 6 to run this project
 
 ## API v1:
 
+
+Auth
+
+- Obtain JWT Token
+/v1/auth/
+
+POST fields:
+    email: required,
+    password: required,
+
+
+Login
+
+pass token to request header with name Authorization and bearer JWT
+Authorization: JWT token
+
+
 User
 
 - List Create User
@@ -30,6 +47,7 @@ fields:
 
 - Retrieve Update Destroy User
 /v1/users/(?P<user_id>\d+)/
+
 
 
 Campaign
@@ -81,13 +99,3 @@ fields:
     img: required
     relative_img
     created_at
-
-
-Auth
-
-- Obtain JWT Token
-/v1/auth/
-
-fields:
-    email: required,
-    password: required,
