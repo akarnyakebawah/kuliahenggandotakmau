@@ -132,6 +132,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'user.custom_auth_backend.EmailOrUsernameModelBackend',
+    'django.contrib.auth.backends.ModelBackend'
+]
 
 JWT_AUTH = {
     'JWT_RESPONSE_PAYLOAD_HANDLER':
