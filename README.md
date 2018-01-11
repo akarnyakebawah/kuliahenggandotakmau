@@ -41,8 +41,10 @@ User
 fields:
     name: required,
     email: required,
+    username: required,
     birth_date: required, YYYY-MM-DD
     password: write_only, required
+    picture
     id: read_only,
 
 - Retrieve Update Destroy User

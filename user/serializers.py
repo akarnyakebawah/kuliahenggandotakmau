@@ -8,7 +8,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'name', 'username', 'birth_date', 'email', 'password')
+        fields = ('id', 'name', 'username', 'picture', 'birth_date', 'email', 'password')
 
         extra_kwargs = {
             'id': {'read_only': True},
@@ -23,6 +23,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
+        instance.picture = validated_data.get('picture', instance.picture)
         instance.is_active = validated_data.get('is_active', instance.is_active)
         instance.birth_date = validated_data.get('birth_date', instance.birth_date)
         instance.save()
