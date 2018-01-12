@@ -12,26 +12,27 @@ class EmailOrUsernameModelBackend(object):
 
     """
     def authenticate(self, username=None, password=None):
-        if (len(username) <= 50):
+        User = get_user_model()
+        if len(username) <= 50:
             if validate_email(username):
                 kwargs = {'email': username}
             else:
                 kwargs = {'username': username}
             try:
-                user = get_user_model().objects.get(**kwargs)
+                user = User.objects.get(**kwargs)
                 if user.check_password(password):
                     return user
-            except get_user_model().DoesNotExist:
+            except User.DoesNotExist:
                 return None
         else:
-            accessToken = 'Bearer ' + username
-            response = requests.get('https://graph.facebook.com/v2.11/me?fields=id,name,email,birthday', headers={'Authorization':accessToken}).json()
-            if ('id' in response):
-                user = None
+            url = 'https://graph.facebook.com/v2.11/me?fields=id,name,email,birthday'
+            access_token = 'Bearer ' + username
+            response = requests.get(url, headers={'Authorization':access_token}).json()
+            if 'id' in response:
                 try:
-                    user = get_user_model().objects.get(email=response['email'])
-                except get_user_model().DoesNotExist:
-                    user = get_user_model().objects.create(
+                    user = User.objects.get(email=response['email'])
+                except User.DoesNotExist:
+                    user = User.objects.create(
                         username=response['email'],
                         email=response['email'],
                         name=response['name'],
