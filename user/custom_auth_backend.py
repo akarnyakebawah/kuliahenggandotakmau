@@ -6,13 +6,14 @@ from django.utils.crypto import get_random_string
 import requests
 import datetime
 
+User = get_user_model()
+
 class EmailOrUsernameModelBackend(object):
     """
     This is a ModelBackend that allows authentication with either a username or an email address.
 
     """
     def authenticate(self, username=None, password=None):
-        User = get_user_model()
         if validate_email(username):
             kwargs = {'email': username}
         else:
@@ -26,8 +27,8 @@ class EmailOrUsernameModelBackend(object):
 
     def get_user(self, username):
         try:
-            return get_user_model().objects.get(pk=username)
-        except get_user_model().DoesNotExist:
+            return User.objects.get(pk=username)
+        except User.DoesNotExist:
             return None
 
 class FacebookAuthorizationBackend(object):
@@ -36,7 +37,6 @@ class FacebookAuthorizationBackend(object):
 
     """
     def authenticate(self, username=None, password=None):
-        User = get_user_model()
         url = 'https://graph.facebook.com/v2.11/me?fields=id,name,email,birthday'
         access_token = 'Bearer ' + username
         response = requests.get(url, headers={'Authorization':access_token}).json()
@@ -57,6 +57,6 @@ class FacebookAuthorizationBackend(object):
 
     def get_user(self, username):
         try:
-            return get_user_model().objects.get(pk=username)
-        except get_user_model().DoesNotExist:
+            return User.objects.get(pk=username)
+        except User.DoesNotExist:
             return None

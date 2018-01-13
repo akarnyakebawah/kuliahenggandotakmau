@@ -49,6 +49,12 @@ class UserManager(BaseUserManager):
 
 
 class User(AbstractBaseUser, PermissionsMixin):
+    GENDER_CHOICES = (
+        ('other', 'Other'),
+        ('male', 'Male'),
+        ('female', 'Female'),
+    )
+
     username = models.CharField(_('username'), unique=True, max_length=50)
     email = models.EmailField(_('email address'), unique=True)
     name = models.CharField(_('name'), max_length=50, blank=True)
@@ -57,6 +63,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(_('is staff'), default=False)
     birth_date = models.DateField(blank=True, null=True)
     picture = models.ImageField(upload_to=picture_directory_path, default="users/picture/anonymous.jpg")
+    gender = models.CharField(_('gender'), choices=GENDER_CHOICES, max_length=16, default="other")
 
     objects = UserManager()
 
