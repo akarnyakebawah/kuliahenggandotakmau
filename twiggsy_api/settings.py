@@ -133,6 +133,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
+    'user.custom_auth_backend.FacebookAuthorizationBackend',
     'user.custom_auth_backend.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend'
 ]
