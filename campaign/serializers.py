@@ -26,6 +26,8 @@ class TwibbonSerializer(serializers.ModelSerializer):
 
 class CampaignSerializer(serializers.ModelSerializer):
 
+    twibbon_count = serializers.SerializerMethodField()
+
     class Meta:
         model = Campaign
         fields = ('__all__')
@@ -49,3 +51,6 @@ class CampaignSerializer(serializers.ModelSerializer):
             user=self.context.get('user'),
             **validated_data
         )
+
+    def get_twibbon_count(self, obj):
+        return obj.twibbons.all().count()
