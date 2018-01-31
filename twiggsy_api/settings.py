@@ -34,7 +34,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'nowi4mt-fx&e5()-yxarsqz(_q-2%ydnvw&l$!p^$$tu*&$d-9'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+PRODUCTION = 'RDS_HOSTNAME' in os.environ
+DEBUG = not PRODUCTION
 
 ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_ALLOW_ALL=True
@@ -49,10 +50,13 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    # Local apps
+    # packages
     'django_s3_storage',
     'corsheaders',
     'rest_framework',
+    'algoliasearch_django'
+
+    # Local apps
     'user',
     'campaign',
     'helper_app',
@@ -107,7 +111,7 @@ DATABASES = {
     }
 }
 
-if 'RDS_HOSTNAME' in os.environ:
+if PRODUCTION:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql',
@@ -165,8 +169,13 @@ USE_L10N = True
 
 USE_TZ = True
 
-# AWS setup
+# Algolia
+ALGOLIA = {
+    'APPLICATION_ID': 'XTJA36XQ8C',
+    'API_KEY': 'c4a641a58a4fa6fbce53abb2ef208071'
+}
 
+# AWS setup
 # The AWS region to connect to.
 AWS_REGION = 'ap-southeast-1'
 AWS_ACCESS_KEY_ID = 'AKIAJMKZVHTG4JWQKPTQ'

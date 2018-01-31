@@ -1,6 +1,7 @@
 from django.db import models
 from user.models import User
 from uuid import uuid4
+from autoslug import AutoSlugField
 
 
 def header_directory_path(instance, filename):
@@ -14,6 +15,8 @@ def twibbon_directory_path(instance, filename):
 
 
 class Category(models.Model):
+    slug = AutoSlugField(_('Slug'), max_length=255, unique=True,
+                         populate_from='name', blank=True, primary_key=True)
     name = models.CharField(max_length=128)
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
