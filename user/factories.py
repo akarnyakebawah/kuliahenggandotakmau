@@ -10,13 +10,15 @@ class UserFactory(Factory):
     name = 'test'
     password = 'test'
 
+
     def _get_manager():
         return User.objects
 
     @classmethod
     def _create(self, model_class, *args, **kwargs):
+        kwargs['username'] = kwargs['email']
         return self._get_manager().create_user(*args, **kwargs)
 
     @classmethod
-    def create_superuser(self, email, password, **extra_fields):
-        return self._get_manager().create_superuser(email, password, **extra_fields)
+    def create_superuser(self, username, email, password, **extra_fields):
+        return self._get_manager().create_superuser(username, email, password, **extra_fields)

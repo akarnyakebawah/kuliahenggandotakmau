@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from campaign.models import Campaign, Twibbon
+from campaign.models import Campaign, Twibbon, Category
 from utils.image import is_ratio_1x1, is_size_small
 
 
@@ -24,9 +24,23 @@ class TwibbonSerializer(serializers.ModelSerializer):
         )
 
 
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        fields = ('name', 'description', 'created_at')
+
+        # assuming this model can only created from django admin
+        extra_kwargs = {
+            'name': {'read_only': True},
+            'description': {'read_only': True},
+            'created_at': {'read_only': True},
+        }
+
+
 class CampaignSerializer(serializers.ModelSerializer):
 
     twibbon_count = serializers.SerializerMethodField()
+    category = CategorySerializer()
 
     class Meta:
         model = Campaign

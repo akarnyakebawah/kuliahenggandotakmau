@@ -37,17 +37,17 @@ class UserTests(APITestCase):
         self.assertEqual(len(User.objects.all()), 0)
 
     def test_create_superuser_success(self):
-        user = UserFactory.create_superuser(email='test@test.com', password='test')
+        user = UserFactory.create_superuser(username='test@test.com', email='test@test.com', password='test')
         self.assertNotEqual(len(User.objects.all()), 0)
 
     def test_create_superuser_email_non_existant(self):
         with self.assertRaises(ValueError):
-            user = UserFactory.create_superuser(email=None, password='test')
+            user = UserFactory.create_superuser(username='test@test.com', email=None, password='test')
         self.assertEqual(len(User.objects.all()), 0)
 
     def test_create_superuser_is_not_superuser(self):
         with self.assertRaises(ValueError):
-            user = UserFactory.create_superuser(email='test@test.com', password='test', is_superuser=False)
+            user = UserFactory.create_superuser(username='test@test.com', email='test@test.com', password='test', is_superuser=False)
         self.assertEqual(len(User.objects.all()), 0)
 
     # User Views
@@ -60,7 +60,7 @@ class UserTests(APITestCase):
 
     def test_user_list_view_not_authenticated(self):
         user1 = UserFactory.create(email='test1@test.com')
-        user2 = UserFactory.create_superuser(email='test2@test.com', password='test')
+        user2 = UserFactory.create_superuser(username='test@test.com', email='test2@test.com', password='test')
 
         view = UserListCreateView.as_view()
 
@@ -71,7 +71,7 @@ class UserTests(APITestCase):
 
     def test_user_list_view_authenticated_as_user(self):
         user1 = UserFactory.create(email='test1@test.com')
-        user2 = UserFactory.create_superuser(email='test2@test.com', password='test')
+        user2 = UserFactory.create_superuser(username='test@test.com', email='test2@test.com', password='test')
 
         view = UserListCreateView.as_view()
 
@@ -83,7 +83,7 @@ class UserTests(APITestCase):
 
     def test_user_list_view_authenticated_as_superuser(self):
         user1 = UserFactory.create(email='test1@test.com')
-        user2 = UserFactory.create_superuser(email='test2@test.com', password='test')
+        user2 = UserFactory.create_superuser(username='test@test.com', email='test2@test.com', password='test')
 
         view = UserListCreateView.as_view()
 
@@ -97,6 +97,7 @@ class UserTests(APITestCase):
         view = UserListCreateView.as_view()
 
         response = self.client.post(reverse('user-list-create'), {
+                'username': 'fataganteng',
                 'name': 'test',
                 'birth_date': '1900-01-01',
                 'email': 'test@test.com',
@@ -110,6 +111,7 @@ class UserTests(APITestCase):
         view = UserListCreateView.as_view()
 
         response = self.client.post(reverse('user-list-create'), {
+                'username': None,
                 'name': None,
                 'birth_date': None,
                 'email': None,
@@ -154,7 +156,7 @@ class UserTests(APITestCase):
     def test_user_view_authenticated_as_superuser(self):
         view = UserRetrieveUpdateDestroyView.as_view()
 
-        user1 = UserFactory.create_superuser(email='test1@test.com', password='test')
+        user1 = UserFactory.create_superuser(username='test@test.com', email='test1@test.com', password='test')
         user2 = UserFactory.create(email='test2@test.com')
 
         self.client.force_authenticate(user=user1)
@@ -166,10 +168,11 @@ class UserTests(APITestCase):
     def test_user_update_invalid_data(self):
         view = UserRetrieveUpdateDestroyView.as_view()
 
-        user = UserFactory.create_superuser(name='test', email='test@test.com', password='test')
+        user = UserFactory.create_superuser(username='test@test.com', name='test', email='test@test.com', password='test')
 
         self.client.force_authenticate(user=user)
         response = self.client.put(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}), {
+                'username': user.username,
                 "id": user.id,
                 "name": None,
                 "birth_date": user.birth_date,
@@ -189,6 +192,7 @@ class UserTests(APITestCase):
 
         self.client.force_authenticate(user=None)
         response = self.client.put(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}), {
+                'username': user.username,
                 "id": user.id,
                 "name": "test2",
                 "birth_date": user.birth_date,
@@ -207,7 +211,8 @@ class UserTests(APITestCase):
         user = UserFactory.create()
 
         self.client.force_authenticate(user=user)
-        response = self.client.put(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}), {
+        response = self.client.put(reverse('user-retrieve-update-destroy', kwargs={"user_id": user.id}), {\
+                'username': user.username,
                 "id": user.id,
                 "name": "test2",
                 "birth_date": user.birth_date,
@@ -228,6 +233,7 @@ class UserTests(APITestCase):
 
         self.client.force_authenticate(user=user1)
         response = self.client.put(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}), {
+                'username': user2.username,
                 "id": user2.id,
                 "name": "test2",
                 "birth_date": user2.birth_date,
@@ -243,11 +249,12 @@ class UserTests(APITestCase):
     def test_user_update_authenticated_as_superuser(self):
         view = UserRetrieveUpdateDestroyView.as_view()
 
-        user1 = UserFactory.create_superuser(email="test1@test.com", password="test")
+        user1 = UserFactory.create_superuser(username='test@test.com', email="test1@test.com", password="test")
         user2 = UserFactory.create(email="test2@test.com")
 
         self.client.force_authenticate(user=user1)
         response = self.client.put(reverse('user-retrieve-update-destroy', kwargs={"user_id": user2.id}), {
+                'username': user2.username,
                 "id": user2.id,
                 "name": "test2",
                 "birth_date": user2.birth_date,
@@ -309,7 +316,7 @@ class UserTests(APITestCase):
     def test_user_destroy_authenticated_as_superuser(self):
         view = UserRetrieveUpdateDestroyView.as_view()
 
-        user1 = UserFactory.create_superuser(email="test1@test.com", password="test")
+        user1 = UserFactory.create_superuser(username='test@test.com', email="test1@test.com", password="test")
         user2 = UserFactory.create(email="test2@test.com")
 
         self.client.force_authenticate(user=user1)

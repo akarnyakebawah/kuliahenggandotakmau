@@ -13,9 +13,12 @@ def twibbon_directory_path(instance, filename):
     return "campaigns/{0}/{1}.{2}".format(instance.campaign_url, "twibbon", ext)
 
 
-# IMPORTANT!
-# Tambahin tags
-# Sebelum prod, hapus file migrations biar rapi
+class Category(models.Model):
+    name = models.CharField(max_length=128)
+    description = models.TextField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+
 class Campaign(models.Model):
     name = models.CharField(max_length=100)
     campaign_url = models.CharField(max_length=100, unique=True, primary_key=True)
@@ -32,10 +35,11 @@ class Campaign(models.Model):
 
     started_at = models.DateTimeField(blank=True, null=True)
     finished_at = models.DateTimeField(blank=True, null=True)
+
     created_at = models.DateTimeField(auto_now_add=True)
 
-    user = models.ForeignKey(User, related_name="campaigns",
-                             on_delete=models.CASCADE)
+    category = models.ForeignKey('campaign.Category', related_name='campaigns', on_delete=models.CASCADE, null=True)
+    user = models.ForeignKey('user.User', related_name="campaigns", on_delete=models.CASCADE)
 
     class Meta:
         ordering = ['-created_at']
@@ -59,6 +63,7 @@ class Twibbon(models.Model):
     campaign = models.ForeignKey(Campaign, related_name="twibbons",
                                  on_delete=models.CASCADE)
     img = models.ImageField(upload_to=twibbon_item_directory_path)
+
     caption = models.TextField(blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 

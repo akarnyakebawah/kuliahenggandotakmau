@@ -6,7 +6,11 @@ from django.db import migrations
 from user.models import User
 
 
+POPULATE_USERNAME = False
 def populate_username(apps, schema_editor):
+    if not POPULATE_USERNAME:
+        return
+
     users = User.objects.all()
     for user in users:
         user.username = user.email

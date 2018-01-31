@@ -1,4 +1,4 @@
-from utils.user import get_user_or_none
+from utils.shortcuts import get_user_or_none
 from rest_framework import generics
 from campaign.models import Campaign, Twibbon
 from campaign.permissions import IsOwnerOrAdminOrReadOnly
