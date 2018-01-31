@@ -62,7 +62,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('is staff'), default=False)
     birth_date = models.DateField(blank=True, null=True)
-    picture = models.ImageField(upload_to=picture_directory_path, default="users/picture/anonymous.jpg")
+    #picture = models.ImageField(upload_to=picture_directory_path, default="users/picture/anonymous.jpg")
     gender = models.CharField(_('gender'), choices=GENDER_CHOICES, max_length=16, default="other")
 
     objects = UserManager()
