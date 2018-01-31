@@ -68,11 +68,12 @@ class CampaignTests(APITestCase):
     def test_post_campaign_owner_is_valid(self):
         user = UserFactory()
         self.client.force_authenticate(user=user)
-        self.client.post(reverse('campaign-list-create'), {
+        response = self.client.post(reverse('campaign-list-create'), {
             'name': 'Nama',
             'campaign_url': 'url',
             'twibbon_img': open(get_sample_image_file_path('1x1.png'), 'rb')
         },secure=True)
+
         campaign = Campaign.objects.first()
         self.assertEqual(campaign.owner_id, user.id)
 

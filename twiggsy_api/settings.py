@@ -173,6 +173,7 @@ AWS_ACCESS_KEY_ID = 'AKIAJMKZVHTG4JWQKPTQ'
 AWS_SECRET_ACCESS_KEY = '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'
 AWS_S3_BUCKET_NAME = 'twiggsy-media'
 AWS_S3_BUCKET_NAME_STATIC = 'twiggsy-media'
+AWS_S3_BUCKET_AUTH = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.11/howto/static-files/

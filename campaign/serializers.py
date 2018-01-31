@@ -40,13 +40,13 @@ class CategorySerializer(serializers.ModelSerializer):
 class CampaignSerializer(serializers.ModelSerializer):
 
     twibbon_count = serializers.SerializerMethodField()
-    category = CategorySerializer()
 
     class Meta:
         model = Campaign
         fields = ('__all__')
 
         extra_kwargs = {
+            'category': {'required': False},
             'created_at': {'read_only': True},
             'twibbon_img': {'required': True},
             'user': {'read_only': True},
