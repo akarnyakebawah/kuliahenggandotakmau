@@ -2,7 +2,7 @@ from factory import DjangoModelFactory, SubFactory
 from django.core.files.uploadedfile import SimpleUploadedFile
 from utils.sample_images.getter import get_sample_image_file_path
 
-from campaign.models import Campaign, Twibbon
+from campaign.models import Campaign, Twibbon, Category
 from user.factories import UserFactory
 
 
@@ -30,3 +30,10 @@ class TwibbonFactory(DjangoModelFactory):
         name='jajaja.png',
         content=open(get_sample_image_file_path('1x1.png'), 'rb').read()
     )
+
+
+class CategoryFactory(DjangoModelFactory):
+    class Meta:
+        model = Category
+
+    name = 'test_category'

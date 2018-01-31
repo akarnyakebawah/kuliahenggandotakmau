@@ -15,8 +15,8 @@ def twibbon_directory_path(instance, filename):
 
 
 class Category(models.Model):
-    slug = AutoSlugField(_('Slug'), max_length=255, unique=True,
-                         populate_from='name', blank=True, primary_key=True)
+    slug = AutoSlugField(max_length=255, unique=True, populate_from='name',
+                         blank=True, primary_key=True)
     name = models.CharField(max_length=128)
     description = models.TextField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -46,6 +46,12 @@ class Campaign(models.Model):
 
     class Meta:
         ordering = ['-created_at']
+
+    def location(self):
+        if self.latitude is not None and self.longtitude is not None:
+            return (self.latitude, self.longtitude)
+
+        return None
 
     def __str__(self):
         return self.campaign_url

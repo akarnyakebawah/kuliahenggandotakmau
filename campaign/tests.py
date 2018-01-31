@@ -5,7 +5,7 @@ from django.urls import reverse
 from rest_framework.test import APITestCase
 
 from user.factories import UserFactory
-from campaign.factories import CampaignFactory, TwibbonFactory
+from campaign.factories import CampaignFactory, TwibbonFactory, CategoryFactory
 from campaign.models import Campaign, Twibbon
 from utils.sample_images.getter import get_sample_image_file_path
 
@@ -26,6 +26,23 @@ class CampaignTests(APITestCase):
         user = UserFactory()
         self.client.force_authenticate(user=user)
         response = self.client.post(reverse('campaign-list-create'), {
+            'name': 'Nama',
+            'campaign_url': 'url',
+            'twibbon_img': open(get_sample_image_file_path('1x1.png'), 'rb')
+        },secure=True)
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(Campaign.objects.all().count(), 1)
+
+        self.assertEqual(Campaign.objects.first().name, 'Nama')
+
+    def test_post_campaign_success_with_category(self):
+        user = UserFactory()
+        self.client.force_authenticate(user=user)
+
+        category = CategoryFactory()
+
+        response = self.client.post(reverse('campaign-list-create'), {
+            'category': category.slug,
             'name': 'Nama',
             'campaign_url': 'url',
             'twibbon_img': open(get_sample_image_file_path('1x1.png'), 'rb')

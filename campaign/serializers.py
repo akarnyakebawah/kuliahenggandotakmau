@@ -27,10 +27,11 @@ class TwibbonSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
-        fields = ('name', 'description', 'created_at')
+        fields = ('slug', 'name', 'description', 'created_at')
 
         # assuming this model can only created from django admin
         extra_kwargs = {
+            'slug': {'read_only': True},
             'name': {'read_only': True},
             'description': {'read_only': True},
             'created_at': {'read_only': True},

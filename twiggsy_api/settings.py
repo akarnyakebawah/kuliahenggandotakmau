@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     'django_s3_storage',
     'corsheaders',
     'rest_framework',
-    'algoliasearch_django'
+    'algoliasearch_django',
 
     # Local apps
     'user',
@@ -172,7 +172,7 @@ USE_TZ = True
 # Algolia
 ALGOLIA = {
     'APPLICATION_ID': 'XTJA36XQ8C',
-    'API_KEY': 'c4a641a58a4fa6fbce53abb2ef208071'
+    'API_KEY': 'c4a641a58a4fa6fbce53abb2ef208071',
 }
 
 # AWS setup
