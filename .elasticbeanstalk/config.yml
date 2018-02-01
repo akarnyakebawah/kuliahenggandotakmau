@@ -2,6 +2,8 @@ branch-defaults:
   deployment:
     environment: twiggsy-api-dev
     group_suffix: null
+  master:
+    environment: twiggsy-api-dev
 environment-defaults:
   twiggsy-api-dev:
     branch: null
