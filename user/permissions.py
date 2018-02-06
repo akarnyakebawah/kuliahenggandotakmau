@@ -9,7 +9,7 @@ class IsOwnerOrAdmin(permissions.BasePermission):
             return False
 
         if request.method != "DELETE":
-            return request.user.is_superuser\
+            return request.user.is_superuser \
                 or request.user.id == obj.id
         else:
             return request.user.is_superuser

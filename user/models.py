@@ -1,14 +1,9 @@
 from django.db import models
+from django.contrib.auth.base_user import AbstractBaseUser, BaseUserManager
 from django.contrib.auth.models import PermissionsMixin
-from django.contrib.auth.base_user import AbstractBaseUser
 from django.utils.translation import ugettext_lazy as _
-from django.contrib.auth.base_user import BaseUserManager
-from uuid import uuid4
 
-
-def picture_directory_path(instance, filename):
-    ext = filename.split('.')[-1]
-    return "users/{0}/{1}.{2}".format(uuid4().hex, "picture", ext)
+from utils import files
 
 
 class UserManager(BaseUserManager):
@@ -62,8 +57,16 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(_('active'), default=True)
     is_staff = models.BooleanField(_('is staff'), default=False)
     birth_date = models.DateField(blank=True, null=True)
-    picture = models.ImageField(upload_to=picture_directory_path, default="users/picture/anonymous.jpg")
-    gender = models.CharField(_('gender'), choices=GENDER_CHOICES, max_length=16, default="other")
+
+    picture = models.ImageField(
+        upload_to=files.s3_upload_path('users', username, 'picture'),
+        default='users/picture/anonymous.jpg')
+
+    gender = models.CharField(
+        _('gender'),
+        choices=GENDER_CHOICES,
+        max_length=16,
+        default="other")
 
     objects = UserManager()
 

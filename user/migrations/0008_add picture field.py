@@ -3,7 +3,8 @@
 from __future__ import unicode_literals
 
 from django.db import migrations, models
-import user.models
+
+import utils
 
 
 class Migration(migrations.Migration):
@@ -16,6 +17,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='user',
             name='picture',
-            field=models.ImageField(default='users/picture/anonymous.jpg', upload_to=user.models.picture_directory_path),
+            field=models.ImageField(default='users/picture/anonymous.jpg', upload_to=utils.files.s3_upload_path),
         ),
     ]
