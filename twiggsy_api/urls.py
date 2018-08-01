@@ -18,11 +18,12 @@ from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
 from rest_framework_jwt.views import obtain_jwt_token
+from rest_framework_jwt.views import verify_jwt_token
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^v1/users/', include('user.urls'), name="user"),
     url(r'^v1/campaigns/', include('campaign.urls'), name="campaign"),
     url(r'^v1/helper/', include('helper_app.urls'), name="helper"),
-    url(r'^v1/auth/', obtain_jwt_token),
+    url(r'^v1/auth/', obtain_jwt_token)
 ]

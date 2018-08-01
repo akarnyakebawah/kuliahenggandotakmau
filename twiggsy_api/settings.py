@@ -16,7 +16,7 @@ import os
 SECURE_HSTS_PRELOAD = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 X_FRAME_OPTIONS = 'DENY'
@@ -144,7 +144,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTHENTICATION_BACKENDS = [
-    'user.custom_auth_backend.FacebookAuthorizationBackend',
+    'user.custom_auth_backend.GoogleAuthorizationBackend',
     'user.custom_auth_backend.EmailOrUsernameModelBackend',
     'django.contrib.auth.backends.ModelBackend'
 ]
