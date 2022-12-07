@@ -3,7 +3,7 @@ algoliasearch-django==1.5.4
 asn1crypto==0.24.0
 boto3==1.4.7
 botocore==1.7.46
-certifi==2017.11.5
+certifi==2022.12.7
 cffi==1.11.4
 chardet==3.0.4
 cryptography==2.1.4
